@@ -2,24 +2,34 @@
 title: TokenRegistry
 ---
 
-TokenRegistry maps EVM token addresses to their HyperCore token and spot market indexes.
+The `TokenRegistry` provides an onchain mapping between EVM token addresses and their corresponding HyperCore token and spot market indexes, populated trustlessly using precompile lookups for each index.
 
-## Motivation
+`TokenRegistry` is deployed on HyperEVM mainnet at [0x0b51d1a9098cf8a72c325003f44c194d41d7a85b](https://hyperevmscan.io/address/0x0b51d1a9098cf8a72c325003f44c194d41d7a85b).
 
-Native precompiles such as `spotBalance` and `spotPx` require indexes, but these cannot be derived from an EVM address on-chain. TokenRegistry maintains an on-chain mapping populated trustlessly using precompile lookups.
+### Usage
 
-## Usage
+**Direct Usage:**
 
 ```solidity
-uint256 spotIdx = TokenRegistry.getSpotIndex(usdc);
-uint256 tokenIdx = TokenRegistry.getTokenIndex(usdc);
+ITokenRegistry tokenRegistry = ITokenRegistry(0x0b51d1a9098cf8a72c325003f44c194d41d7a85b);
 
-uint256 px = PrecompileLib.spotPx(spotIdx);
-uint256 bal = PrecompileLib.spotBalance(tokenIdx, user);
+// Get the token index for an evm token address 
+uint32 tokenIdx = tokenRegistry.getTokenIndex(tokenAddress);
+
+// Read a user's spot balance using the token index
+uint256 spotBalance = PrecompileLib.spotBalance(tokenIdx, user);
 ```
 
-## Guarantees
+**Usage through PrecompileLib:** The `PrecompileLib` exposes a [getTokenIndex function](https://github.com/hyperliquid-dev/hyper-evm-lib/blob/b347756c392934712af9c27b92028a00b93cb68c/src/PrecompileLib.sol#L61-L66) to read from the `TokenRegistry`, and can be used instead of directly interacting with the `TokenRegistry` contract. 
 
-- The mapping is sourced via precompiles to avoid manual indexing errors.
-- Consumers can rely on deterministic resolution across contracts.
+```solidity
+uint64 tokenIdx = PrecompileLib.getTokenIndex(tokenAddress);
+```
+
+### Motivation
+
+Calling HyperCore precompiles (for example, `spotBalance` and `spotPx`) requires token and spot market indexes, but those indexes can’t be derived from an EVM token address natively onchain. 
+
+TokenRegistry fills that gap with a trustless, on-chain mapping from EVM token addresses to their corresponding token and spot indexes, populated via precompile lookups, so contracts and tests can resolve indexes reliably. 
+
 
