@@ -13,33 +13,19 @@ echo "@hyper-evm-lib=lib/hyper-evm-lib" >> remappings.txt
 
 ## Quickstart
 
+### For Developing Contracts
+
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
 import { CoreWriterLib } from "@hyper-evm-lib/src/CoreWriterLib.sol";
 import { PrecompileLib } from "@hyper-evm-lib/src/PrecompileLib.sol";
-import { TokenRegistry } from "@hyper-evm-lib/src/TokenRegistry.sol";
 
-contract MyHyperApp {
-    using CoreWriterLib for *;
+contract Example {
 
-    address public immutable usdc;
-
-    constructor(address _usdc) {
-        usdc = _usdc;
-    }
-
-    function bridgeUsdcToCore(uint256 evmAmount, address coreRecipient) external {
-        // Convert EVM decimals to Core decimals and bridge
-        uint256 coreAmount = PrecompileLib.convertEvmToCoreAmount(usdc, evmAmount);
-        CoreWriterLib.bridgeToCore(usdc, coreAmount, coreRecipient);
-    }
 }
 ```
 
-Next, explore the components:
-
-- CoreWriter actions and bridging: `/corewriter`
-- Read precompiles and address-based helpers: `/precompiles`
-- Address → token/spot index lookups: `/token-registry`
+### For Testing Contracts
+INSERT- example contract with import for testing stuff

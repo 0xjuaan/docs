@@ -28,7 +28,7 @@ export default defineConfig({
     {
       text: 'Testing Framework',
       items: [
-        { text: 'Overview', link: '/overview' },
+        { text: 'Overview', link: '/testing-overview' },
         { text: 'Quick start', link: '/testing-framework' },
         { text: 'Cheatcodes', link: '/cheatcodes' },
       ],
