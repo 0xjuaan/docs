@@ -1,0 +1,34 @@
+---
+title: Testing Framework
+---
+
+The testing framework simulates HyperCore interactions so you can test end-to-end flows:
+
+- Bridging between EVM and Core
+- CoreWriter actions
+- Precompile reads
+
+## Why it helps
+
+It removes uncertainty by letting you validate business logic across both environments locally.
+
+## Example
+
+```solidity
+// Pseudocode
+setUpHyperCoreHarness();
+
+address usdc = deployTestToken(6);
+address user = address(0xBEEF);
+
+// Simulate bridging to Core
+uint256 coreAmount = PrecompileLib.convertEvmToCoreAmount(usdc, 1_000_000);
+CoreWriterLib.bridgeToCore(usdc, coreAmount, user);
+
+// Validate Core state via precompiles
+uint256 bal = PrecompileLib.spotBalanceByAddress(usdc, user);
+assert(bal == coreAmount);
+```
+
+Refer to repository tests for full harness utilities and fixtures.
+

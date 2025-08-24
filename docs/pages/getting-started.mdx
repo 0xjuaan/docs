@@ -1,3 +1,52 @@
-# Get started
+---
+title: Getting Started
+---
 
-Hello world!
+## Installation
+
+Install with Foundry:
+
+```bash
+forge install hyperliquid-dev/hyper-evm-lib
+echo "@hyper-evm-lib=lib/hyper-evm-lib" >> remappings.txt
+```
+
+## What you get
+
+- CoreWriterLib utilities for bridging and Core actions
+- PrecompileLib helpers to query native precompiles (with address-based overloads)
+- TokenRegistry to derive token/spot indexes from EVM addresses
+- Test helpers to simulate HyperCore bridging, precompiles, and CoreWriter flows
+
+## Quickstart
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import { CoreWriterLib } from "@hyper-evm-lib/src/CoreWriterLib.sol";
+import { PrecompileLib } from "@hyper-evm-lib/src/PrecompileLib.sol";
+import { TokenRegistry } from "@hyper-evm-lib/src/TokenRegistry.sol";
+
+contract MyHyperApp {
+    using CoreWriterLib for *;
+
+    address public immutable usdc;
+
+    constructor(address _usdc) {
+        usdc = _usdc;
+    }
+
+    function bridgeUsdcToCore(uint256 evmAmount, address coreRecipient) external {
+        // Convert EVM decimals to Core decimals and bridge
+        uint256 coreAmount = PrecompileLib.convertEvmToCoreAmount(usdc, evmAmount);
+        CoreWriterLib.bridgeToCore(usdc, coreAmount, coreRecipient);
+    }
+}
+```
+
+Next, explore the components:
+
+- CoreWriter actions and bridging: `/corewriter`
+- Read precompiles and address-based helpers: `/precompiles`
+- Address → token/spot index lookups: `/token-registry`

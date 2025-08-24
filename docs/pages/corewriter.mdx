@@ -1,0 +1,34 @@
+---
+title: CoreWriterLib
+---
+
+CoreWriterLib provides helpers to perform CoreWriter actions and bridge assets between HyperEVM and Core.
+
+## Capabilities
+
+- Bridge tokens to Core and back to EVM
+- Convert token amounts between EVM decimals and Core decimals
+- Invoke CoreWriter actions with ergonomic overloads
+
+## Bridging
+
+```solidity
+uint256 coreAmount = PrecompileLib.convertEvmToCoreAmount(usdc, evmAmount);
+CoreWriterLib.bridgeToCore(usdc, coreAmount, coreRecipient);
+
+// Later, bridge back to EVM
+CoreWriterLib.bridgeToEvm(usdc, coreAmount, evmRecipient);
+```
+
+## Decimal conversion
+
+```solidity
+uint256 coreAmt = PrecompileLib.convertEvmToCoreAmount(token, evmAmt);
+uint256 evmAmt2 = PrecompileLib.convertCoreToEvmAmount(token, coreAmt);
+```
+
+## Notes
+
+- Conversions may lose precision when EVM decimals > Core decimals.
+- Precompile views reflect data from the start of the block.
+

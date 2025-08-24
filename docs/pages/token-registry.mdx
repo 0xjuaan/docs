@@ -1,0 +1,25 @@
+---
+title: TokenRegistry
+---
+
+TokenRegistry maps EVM token addresses to their HyperCore token and spot market indexes.
+
+## Motivation
+
+Native precompiles such as `spotBalance` and `spotPx` require indexes, but these cannot be derived from an EVM address on-chain. TokenRegistry maintains an on-chain mapping populated trustlessly using precompile lookups.
+
+## Usage
+
+```solidity
+uint256 spotIdx = TokenRegistry.getSpotIndex(usdc);
+uint256 tokenIdx = TokenRegistry.getTokenIndex(usdc);
+
+uint256 px = PrecompileLib.spotPx(spotIdx);
+uint256 bal = PrecompileLib.spotBalance(tokenIdx, user);
+```
+
+## Guarantees
+
+- The mapping is sourced via precompiles to avoid manual indexing errors.
+- Consumers can rely on deterministic resolution across contracts.
+

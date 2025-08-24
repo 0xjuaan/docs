@@ -1,0 +1,31 @@
+---
+title: PrecompileLib
+---
+
+PrecompileLib exposes read-only access to native precompiles and adds helpers to use EVM token addresses instead of numeric indexes.
+
+## Why it matters
+
+Native precompiles often require token or spot indexes. These are not derivable on-chain from the EVM address. PrecompileLib pairs with TokenRegistry to resolve indexes automatically.
+
+## Common reads
+
+```solidity
+// Get spot balance for msg.sender by token address
+uint256 balance = PrecompileLib.spotBalanceByAddress(usdc, msg.sender);
+
+// Get spot price by address
+uint256 price = PrecompileLib.spotPxByAddress(usdc);
+```
+
+## Index-based reads (native)
+
+```solidity
+uint256 spotIdx = TokenRegistry.getSpotIndex(usdc);
+uint256 px = PrecompileLib.spotPx(spotIdx);
+```
+
+## Notes
+
+- Precompile results reflect the beginning-of-block state; CoreWriter actions update next block.
+

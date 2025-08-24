@@ -1,0 +1,14 @@
+---
+title: Security Considerations
+---
+
+Keep these considerations in mind when integrating hyper-evm-lib:
+
+- bridgeToEvm for non-HYPE tokens requires holding HYPE on HyperCore for gas; otherwise `spotSend` fails.
+- `convertEvmToCoreAmount` can lose precision when EVM decimals exceed Core decimals (integer downscaling).
+- Deploy contracts with complete bridging flows to avoid stuck assets on Core.
+  - For example, implementing `bridgeToCore` without `bridgeToEvm` can trap assets.
+- Precompile reads return beginning-of-block state. CoreWriter actions affect the next call.
+
+Adopt least privilege, validate inputs, and prefer pull patterns for withdrawals.
+
