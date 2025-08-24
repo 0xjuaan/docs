@@ -12,6 +12,12 @@ The testing framework simulates HyperCore interactions so you can test end-to-en
 
 Testing CoreWriter actions and their state changes is not possible today. This framework makes it possible by simulating HyperCore state. After a CoreWriter action, it updates precompile data so tests can read the new values right away. It also works with forked tests that start from the current state, the simulator updates the state from that point. 
 
+### How to use it
+
+Inherit `BaseSimulatorTest` in your tests. It handles basic setup, provides common token addresses and indices, and creates a `user` with $1,000 USDC in their Spot and Perp accounts on core.
+
+CoreWriter actions only execute in the following blocks. Call the `CoreSimulatorLib.nextBlock()` function to move forward: it increases the block number and timestamp, executes all pending CoreWriter actions from the previous block and applies their state changes, then precompile reads will reflect the updated state.
+
 
 
 
