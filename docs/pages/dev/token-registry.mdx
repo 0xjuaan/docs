@@ -20,7 +20,7 @@ uint32 tokenIdx = tokenRegistry.getTokenIndex(tokenAddress);
 uint256 spotBalance = PrecompileLib.spotBalance(tokenIdx, user);
 ```
 
-**Usage through PrecompileLib:** The `PrecompileLib` exposes a [getTokenIndex function](https://github.com/hyperliquid-dev/hyper-evm-lib/blob/b347756c392934712af9c27b92028a00b93cb68c/src/PrecompileLib.sol#L61-L66) to read from the `TokenRegistry`, and can be used instead of directly interacting with the `TokenRegistry` contract. 
+**Usage through PrecompileLib:** The `PrecompileLib` exposes a [getTokenIndex](https://github.com/hyperliquid-dev/hyper-evm-lib/blob/b347756c392934712af9c27b92028a00b93cb68c/src/PrecompileLib.sol#L61-L66) function to read from the `TokenRegistry`, and can be used instead of directly interacting with the `TokenRegistry` contract. 
 
 ```solidity
 uint64 tokenIdx = PrecompileLib.getTokenIndex(tokenAddress);
@@ -28,9 +28,12 @@ uint64 tokenIdx = PrecompileLib.getTokenIndex(tokenAddress);
 
 ### Motivation
 
-Precompiles like `spotBalance`, `spotPx` and more, all require either a token index (for `spotBalance`) or a spot market index (for `spotPx`) as an input parameter. Similarly bridging an EVM token over to core requires knowing its token index
+Precompiles like `spotBalance`, `spotPx` and more, all require either a token index (for `spotBalance`) or a spot market index (for `spotPx`) as an input parameter. Bridging an EVM token to HyperCore uses its token index to derive its system address (the `spotSend` destination).
 
 Natively, there is no way to derive the token index given a token's contract address, requiring projects to store it manually, or pass it in as a parameter whenever needed.
 
-`TokenRegistry` solves this by providing a deployed onchain mapping from EVM contract addresses to their HyperCore token indexes, populated trustlessly using precompile lookups for each index.
+`TokenRegistry` solves this by providing a deployed onchain mapping from EVM contract addresses to their HyperCore token indices, populated trustlessly using precompile lookups for each index.
+
+
+
 
