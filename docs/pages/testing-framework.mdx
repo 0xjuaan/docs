@@ -4,13 +4,17 @@ title: Testing Framework
 
 The testing framework simulates HyperCore interactions so you can test end-to-end flows:
 
-- Bridging between EVM and Core
-- CoreWriter actions
-- Precompile reads
+- Full bridging flows between EVM and HyperCore
+- Test CoreWriter actions
+- Read updated precompile data after CoreWriter actions
 
-## Why it helps
+### Why it's needed
 
-It removes uncertainty by letting you validate business logic across both environments locally.
+Testing CoreWriter actions and their state changes is not possible today. This framework makes it possible by simulating HyperCore state. After a CoreWriter action, it updates precompile data so tests can read the new values right away. It also works with forked tests that start from the current state, the simulator updates the state from that point. 
+
+
+
+
 
 ## Example
 
