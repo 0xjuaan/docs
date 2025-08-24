@@ -13,24 +13,24 @@ export default defineConfig({
     {
       text: 'Introduction',
       items: [
-        { text: 'Overview', link: '/overview' },
-        { text: 'Getting Started', link: '/getting-started' },
+        { text: 'Overview', link: '/intro/overview' },
+        { text: 'Getting Started', link: '/intro/getting-started' },
       ],
     },
     {
       text: 'Development',
       items: [
-        { text: 'CoreWriterLib', link: '/corewriter' },
-        { text: 'PrecompileLib', link: '/precompiles' },
-        { text: 'TokenRegistry', link: '/token-registry' },
+        { text: 'CoreWriterLib', link: '/dev/corewriter' },
+        { text: 'PrecompileLib', link: '/dev/precompiles' },
+        { text: 'TokenRegistry', link: '/dev/token-registry' },
       ],
     },
     {
       text: 'Testing Framework',
       items: [
-        { text: 'Overview', link: '/testing-overview' },
-        { text: 'Quick start', link: '/testing-framework' },
-        { text: 'Cheatcodes', link: '/cheatcodes' },
+        { text: 'Overview', link: '/testing/overview' },
+        { text: 'Quick start', link: '/testing/quick-start' },
+        { text: 'Cheatcodes', link: '/testing/cheatcodes' },
       ],
     },
     { text: 'Examples', link: '/example' },
