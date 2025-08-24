@@ -29,7 +29,7 @@ import {CoreSimulatorLib} from "@hyper-evm-lib/test/simulation/CoreSimulatorLib.
 contract ExampleVaultTest is BaseSimulatorTest {
     function test_exampleVaultDepositAndWithdraw() public {
         VaultExample vaultExampleContract = new VaultExample();
-        hyperCore.forceAccountCreation(address(vaultExampleContract));
+        hyperCore.forceAccountActivation(address(vaultExampleContract));
         hyperCore.forcePerpBalance(address(vaultExampleContract), 1000e6);
 
         address testVault = 0x07Fd993f0fA3A185F7207ADcCD29f7A87404689D;
