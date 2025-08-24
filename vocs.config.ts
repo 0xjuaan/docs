@@ -20,6 +20,7 @@ export default defineConfig({
     {
       text: 'Development',
       items: [
+        { text: 'Overview', link: '/dev/overview' },
         { text: 'CoreWriterLib', link: '/dev/corewriter' },
         { text: 'PrecompileLib', link: '/dev/precompiles' },
         { text: 'TokenRegistry', link: '/dev/token-registry' },
