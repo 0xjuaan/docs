@@ -63,6 +63,21 @@ contract ExampleVaultTest is BaseSimulatorTest {
 }
 ```
 
+### Test utility functions
+
+- `setRevertOnFailure`: make queued CoreWriter actions revert on failure (defaults to false to mimic onchain behavior).
+- `setMarkPx`: set a token's mark price or adjust by bps to test trading PnL.
+- `setSpotPx`: set a spot market's price 
+- `setVaultMultiplier`: scale vault equity to simulate profit/loss scenarios.
+
+- `forceAccountActivation`: activate a Core account for an address.
+- `forceSpot`: set an account's spot balance for a token
+- `forcePerpBalance`: set an account's withdrawable perp USD.
+- `forceStaking`: set an account's staking balance.
+- `forceDelegation`: set an account's delegation amount and locked until timestamp for a validator.
+- `forceVaultEquity`: set an account's vault equity and lock timestamp for a vault
+
+
 ### Why it's needed
 
 Two gaps today: 
