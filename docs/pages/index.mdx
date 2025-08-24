@@ -1,16 +1,55 @@
-# hyper-evm-lib — build on HyperEVM faster and safer
+---
+layout: landing
+content:
+  width: 100%
+showLogo: false
+description: The all-in-one library to seamlessly build smart contracts on HyperEVM.
+---
+<div style={{ maxWidth: '1120px', margin: '0 auto', padding: '32px 24px' }}>
+  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'center', justifyContent: 'space-between' }}>
+    <div style={{ flex: '1 1 460px', minWidth: 320 }}>
+      <img src="/og-image.png" alt="hyper-evm-lib" style={{ width: '100%', height: 'auto', borderRadius: 12 }} />
+      <p style={{ marginTop: 12, color: '#919193' }}>Blazing fast toolkit for building on HyperEVM</p>
+    </div>
+    <div style={{ flex: '1 1 460px', minWidth: 320 }}>
+      <h1 style={{ marginTop: 0 }}>hyper-evm-lib</h1>
+      <p>
+        The all-in-one library to seamlessly build smart contracts on HyperEVM. Unified interfaces
+        for bridging assets, performing CoreWriter actions, reading native precompiles, and a
+        TokenRegistry for address-to-index lookups. Includes a full testing framework to simulate
+        HyperCore interactions.
+      </p>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 12 }}>
+        <a href="/getting-started" style={{ textDecoration: 'none', padding: '10px 14px', borderRadius: 8, background: '#6EE7B7', color: '#0B0B0C', fontWeight: 600 }}>Get started</a>
+        <a href="https://github.com/hyperliquid-dev/hyper-evm-lib" style={{ textDecoration: 'none', padding: '10px 14px', borderRadius: 8, border: '1px solid rgba(0,0,0,0.15)' }}>GitHub</a>
+        <a href="/example" style={{ textDecoration: 'none', padding: '10px 14px', borderRadius: 8, border: '1px solid rgba(0,0,0,0.15)' }}>Examples</a>
+      </div>
+    </div>
+  </div>
 
-The all-in-one library to seamlessly build smart contracts on HyperEVM. Unified interfaces for:
+  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 12, marginTop: 32 }}>
+    <a href="/corewriter" style={{ display: 'block', textDecoration: 'none', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 12, padding: 16 }}>
+      <div style={{ fontSize: 18, fontWeight: 600, color: 'inherit' }}>CoreWriter actions</div>
+      <div style={{ color: '#919193', marginTop: 6 }}>Bridge tokens and invoke CoreWriter with ergonomic overloads</div>
+    </a>
+    <a href="/precompiles" style={{ display: 'block', textDecoration: 'none', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 12, padding: 16 }}>
+      <div style={{ fontSize: 18, fontWeight: 600, color: 'inherit' }}>Read precompiles</div>
+      <div style={{ color: '#919193', marginTop: 6 }}>Query native read precompiles, including address-based helpers</div>
+    </a>
+    <a href="/token-registry" style={{ display: 'block', textDecoration: 'none', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 12, padding: 16 }}>
+      <div style={{ fontSize: 18, fontWeight: 600, color: 'inherit' }}>TokenRegistry</div>
+      <div style={{ color: '#919193', marginTop: 6 }}>Resolve token and spot indexes from EVM addresses</div>
+    </a>
+    <a href="/testing-framework" style={{ display: 'block', textDecoration: 'none', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 12, padding: 16 }}>
+      <div style={{ fontSize: 18, fontWeight: 600, color: 'inherit' }}>Full testing framework</div>
+      <div style={{ color: '#919193', marginTop: 6 }}>Simulate bridging, precompiles, and CoreWriter actions end-to-end</div>
+    </a>
+  </div>
+</div>
 
-- Bridging assets and performing CoreWriter actions
-- Reading native precompiles (with address-based helpers)
-- Resolving token/spot indexes via TokenRegistry
-- Full testing framework simulating HyperCore interactions
+## Quick install
 
-[Get started](/getting-started)  [Examples](/example)
-
-## Key features
-
-- [CoreWriter & Precompiles](/corewriter)
-- [TokenRegistry](/token-registry)
-- [Full testing framework](/testing-framework)
+```bash
+forge install hyperliquid-dev/hyper-evm-lib
+echo "@hyper-evm-lib=lib/hyper-evm-lib" >> remappings.txt
+```
