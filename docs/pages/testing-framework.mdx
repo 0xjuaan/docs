@@ -8,19 +8,11 @@ The testing framework simulates HyperCore interactions so you can test end-to-en
 - Test CoreWriter actions
 - Read updated precompile data after CoreWriter actions
 
-## Why it's needed
+### How to use it
 
-Testing CoreWriter actions and their state changes is not possible today. This framework makes it possible by simulating HyperCore state. After a CoreWriter action, it updates precompile data so tests can read the new values right away. It also works with forked tests that start from the current state, the simulator updates the state from that point. 
+Inherit `BaseSimulatorTest` in your tests. It handles the simulator setup, and provides common constants used in testing. 
 
-## Usage
-
-Inherit `BaseSimulatorTest` in your tests. It handles the simulator setup, provides common token addresses and indices, and creates a `user` with $1,000 USDC in their Spot and Perp accounts on core.
-
-CoreWriter actions only execute in the following blocks. Call the `CoreSimulatorLib.nextBlock()` function to move forward: it increases the block number and timestamp, executes all pending CoreWriter actions from the previous block and applies their state changes, then precompile reads will reflect the updated state.
-
-### Example 
-
-The test below inherits `BaseSimulatorTest`, deploys the `VaultExample` contract, funds its perp balance, deposits to a vault, advances one block via `nextBlock` to apply CoreWriter updates, asserts an early withdrawal reverts due to the lockup period, warps `block.timestamp` past it, withdraws from the vault, advances another block, then verifies the perp balance is restored.
+Call `CoreSimulatorLib.nextBlock()` to move to the next block and execute any queued CoreWriter actions. See the example below:
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -44,11 +36,9 @@ contract ExampleVaultTest is BaseSimulatorTest {
         uint64 depositAmount = 100e6;
 
         uint64 balanceBefore = PrecompileLib.withdrawable(address(vaultExampleContract));
-        console.log("Perp balance before deposit:", balanceBefore);
 
         vaultExampleContract.depositToVault(testVault, depositAmount);
         CoreSimulatorLib.nextBlock();
-        console.log("Perp balance after deposit:", PrecompileLib.withdrawable(address(vaultExampleContract)));
 
         // Try to withdraw before the lock period expires - should revert
         PrecompileLib.UserVaultEquity memory vaultEquity =
@@ -67,12 +57,20 @@ contract ExampleVaultTest is BaseSimulatorTest {
         CoreSimulatorLib.nextBlock();
 
         uint64 balanceAfter = PrecompileLib.withdrawable(address(vaultExampleContract));
-        console.log("Perp balance after withdraw:", balanceAfter);
 
         assertEq(balanceBefore, balanceAfter);
     }
 }
 ```
+
+### Why it's needed
+
+Two gaps today: 
+
+1. Normal Tests can’t read HyperCore precompiles
+2. They also can’t execute CoreWriter actions and observe their state changes. 
+
+This framework solves both by reading precompiles via RPC on first access and caching them locally, and by queuing CoreWriter actions to execute on the next block (via `CoreSimulatorLib.nextBlock()`), which applies state updates so subsequent precompile reads reflect the new state.
 
 ### How it works
 
