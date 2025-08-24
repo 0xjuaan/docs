@@ -14,10 +14,13 @@ Testing CoreWriter actions and their state changes is not possible today. This f
 
 ### How to use it
 
-Inherit `BaseSimulatorTest` in your tests. It handles basic setup, provides common token addresses and indices, and creates a `user` with $1,000 USDC in their Spot and Perp accounts on core.
+Inherit `BaseSimulatorTest` in your tests. It handles the simulator setup, provides common token addresses and indices, and creates a `user` with $1,000 USDC in their Spot and Perp accounts on core.
 
 CoreWriter actions only execute in the following blocks. Call the `CoreSimulatorLib.nextBlock()` function to move forward: it increases the block number and timestamp, executes all pending CoreWriter actions from the previous block and applies their state changes, then precompile reads will reflect the updated state.
 
+### Acknowledgements
+
+This work builds on the simulator by Cain from Hyperdrive. We adopted the core approach and added major changes, including forked testing to run against current chain state and support for Spot/Perp trading, among many others. See the original repo here: [hypercore-sim](https://github.com/ambitlabsxyz/hypercore/tree/main/packages/hypercore-sim).
 
 
 
