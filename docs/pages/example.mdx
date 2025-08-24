@@ -19,3 +19,46 @@ uint256 px = PrecompileLib.spotPxByAddress(usdc);
 ```
 
 See the repository `examples/` directory for full working examples.
+
+### For Testing Contracts
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import {Test} from "@hyper-evm-lib/test/BaseSimulatorTest.sol";
+import {CoreWriterLib} from "@hyper-evm-lib/src/CoreWriterLib.sol";
+
+import {CoreSimulatorLib} from "@hyper-evm-lib/test/simulation/CoreSimulatorLib.sol";
+
+contract ExampleTest is Test {
+
+    uint64 constant HYPE = 150;
+    ExampleContract example;
+
+    function setUp() public {
+        vm.createSelectFork("https://rpc.hyperliquid.xyz/evm");
+
+        // initialize the HyperCore simulator
+        CoreSimulatorLib.init();
+
+        // deploy your contract in the test environment
+        example = new ExampleContract();
+        CoreSimulatorLib.forceAccountActivation(address(example));
+    }
+
+    function test_bridge() public { 
+        // this example contract bridges HYPE to HyperCore
+        example.bridgeToCore{value: 1e18}(HYPE, 1e18);
+
+        // move to the next block, performing all queued HyperCore interaction(s)
+        CoreSimulatorLib.nextBlock();
+
+    }
+}
+
+contract ExampleContract {
+    function bridgeToCore(uint64 tokenId, uint256 evmAmount) external payable {
+        CoreWriterLib.bridgeToCore(tokenId, evmAmount);
+    }
+}
+```

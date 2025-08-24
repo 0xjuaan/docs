@@ -1,0 +1,91 @@
+---
+title: Getting Started
+---
+
+## Installation
+
+Install in an existing [foundry](https://getfoundry.sh/) project:
+
+```bash
+forge install hyperliquid-dev/hyper-evm-lib
+echo "@hyper-evm-lib=lib/hyper-evm-lib" >> remappings.txt
+```
+
+## Quickstart
+
+### For Developing Contracts
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import {CoreWriterLib, HLConstants, HLConversions} from "@hyper-evm-lib/src/CoreWriterLib.sol";
+import { PrecompileLib } from "@hyper-evm-lib/src/PrecompileLib.sol";
+
+// Example use-cases of CoreWriterLib and PrecompileLib
+contract Example {
+    /// @notice Demonstrates usage of PrecompileLib to read spot balance
+    function getSpotBalance(address tokenAddress) external view returns (uint256) {
+
+        // Get spot balance using tokenAddress 
+        // (the address is converted under-the-hood to tokenId using TokenRegistry)
+        PrecompileLib.SpotBalance memory spotBalance = 
+            PrecompileLib.spotBalance(address(this), tokenAddress);
+        return spotBalance.total;
+    }
+
+    /// @notice Bridges tokens to core and then sends them to another address
+    function bridgeToCoreAndSend(address tokenAddress, uint256 evmAmount, address recipient) external payable {
+
+        // Get token ID from address, using TokenRegistry
+        uint64 tokenId = PrecompileLib.getTokenIndex(tokenAddress);
+
+        // use CoreWriterLib to bridge tokens
+        CoreWriterLib.bridgeToCore(tokenAddress, evmAmount);
+
+        // Convert EVM amount to wei amount (used in HyperCore)
+        uint64 coreAmount = HLConversions.evmToWei(tokenId, evmAmount);
+
+        // use CoreWriterLib to call the spotSend CoreWriter action
+        CoreWriterLib.spotSend(recipient, tokenId, coreAmount);
+    }
+}
+```
+
+See [CoreWriterLib](/corewriter) and [PrecompileLib](/precompiles) for more details.
+
+### For Testing Contracts
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import {Test} from "forge-std/Test.sol";
+import {CoreSimulatorLib} from "@hyper-evm-lib/test/simulation/CoreSimulatorLib.sol";
+
+contract ExampleTest is Test {
+
+    function setUp() public {
+        vm.createSelectFork("https://rpc.hyperliquid.xyz/evm");
+
+        // initialize the HyperCore simulator
+        CoreSimulatorLib.init();
+    }
+
+    function test() public { 
+
+        // Make any smart contract calls, 
+        // all CoreWriter and token bridging actions will be queued
+
+        ...
+
+        // move to the next block, performing all queued CoreWriter and bridging actions
+        CoreSimulatorLib.nextBlock();
+
+        // Now, all precompiles calls will be 
+        //updated to account for the above executed actions
+    }
+}
+
+```
+
+See [Testing Framework](/testing-framework) for more details.

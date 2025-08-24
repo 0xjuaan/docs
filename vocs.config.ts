@@ -34,6 +34,5 @@ export default defineConfig({
       ],
     },
     { text: 'Examples', link: '/example' },
-    { text: 'Contributing', link: '/contributing' },
   ],
 })

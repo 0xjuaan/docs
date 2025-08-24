@@ -1,0 +1,20 @@
+---
+title: CoreWriterLib
+description: Thin, safe wrappers around HyperEVM’s CoreWriter actions + bridging/staking/trading helpers.
+---
+
+import { Callout } from "vocs/components";
+
+# CoreWriterLib
+
+A lightweight helper library that makes it trivial to call **CoreWriter** actions, while handling common foot‑guns:
+
+- Converts **EVM decimals ⇄ HyperCore's “wei” decimals** using `HLConversions`
+- Computes **system addresses** for spot/bridging
+- Performs **sanity checks** (e.g., zero‑amount after conversion, vault lock checks, self‑transfer guards)
+
+
+## Install & import
+
+```solidity
+import {CoreWriterLib} from "@hyper-evm-lib/src/CoreWriterLib.sol";
