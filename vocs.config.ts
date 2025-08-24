@@ -13,6 +13,7 @@ export default defineConfig({
     {
       text: 'Introduction',
       items: [
+        { text: 'Overview', link: '/overview' },
         { text: 'Getting Started', link: '/getting-started' },
       ],
     },
@@ -27,6 +28,7 @@ export default defineConfig({
     {
       text: 'Testing Framework',
       items: [
+        { text: 'Overview', link: '/testing-framework' },
         { text: 'Quick start', link: '/testing-framework' },
         { text: 'Cheatcodes', link: '/cheatcodes' },
       ],
