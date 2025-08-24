@@ -2,6 +2,13 @@ import { defineConfig } from 'vocs'
 
 export default defineConfig({
   title: 'hyper-evm-lib',
+  theme: {
+    accentColor: {
+      dark: '#42e7d7',
+      // light: '#f98a1a', -- darker orange than the one below
+      light: '#12a787',
+    },
+  },
   sidebar: [
     {
       text: 'Getting Started',

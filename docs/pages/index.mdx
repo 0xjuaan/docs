@@ -1,55 +1,127 @@
 ---
-layout: landing
 content:
   width: 100%
+layout: landing
 showLogo: false
 description: The all-in-one library to seamlessly build smart contracts on HyperEVM.
 ---
-<div style={{ maxWidth: '1120px', margin: '0 auto', padding: '32px 24px' }}>
-  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'center', justifyContent: 'space-between' }}>
-    <div style={{ flex: '1 1 460px', minWidth: 320 }}>
-      <img src="/og-image.png" alt="hyper-evm-lib" style={{ width: '100%', height: 'auto', borderRadius: 12 }} />
-      <p style={{ marginTop: 12, color: '#919193' }}>Blazing fast toolkit for building on HyperEVM</p>
-    </div>
-    <div style={{ flex: '1 1 460px', minWidth: 320 }}>
-      <h1 style={{ marginTop: 0 }}>hyper-evm-lib</h1>
-      <p>
-        The all-in-one library to seamlessly build smart contracts on HyperEVM. Unified interfaces
-        for bridging assets, performing CoreWriter actions, reading native precompiles, and a
-        TokenRegistry for address-to-index lookups. Includes a full testing framework to simulate
-        HyperCore interactions.
-      </p>
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 12 }}>
-        <a href="/getting-started" style={{ textDecoration: 'none', padding: '10px 14px', borderRadius: 8, background: '#6EE7B7', color: '#0B0B0C', fontWeight: 600 }}>Get started</a>
-        <a href="https://github.com/hyperliquid-dev/hyper-evm-lib" style={{ textDecoration: 'none', padding: '10px 14px', borderRadius: 8, border: '1px solid rgba(0,0,0,0.15)' }}>GitHub</a>
-        <a href="/example" style={{ textDecoration: 'none', padding: '10px 14px', borderRadius: 8, border: '1px solid rgba(0,0,0,0.15)' }}>Examples</a>
+
+import { HomePage } from "vocs/components";
+
+<div className="max-w-[1120px] mx-auto vp-doc relative px-[24px] mb-[64px] mt-[32px] md:px-0 md:mb-[32px]">
+  <div className="pt-[48px] max-sm:pt-0">
+    <div className="max-sm:px-0 space-x-2 flex justify-between z-0 max-md:justify-center max-md:flex-col max-md:items-center max-md:space-y-6">
+      <div className="space-y-4 max-w-[500px] flex flex-col justify-between items-start max-md:items-center">
+        <div className="space-y-4 w-full lg:mb-[40px]">
+          <img
+          src="/og-image.png"
+          alt="hyper-evm-lib"
+          className="w-full h-auto rounded-xl"
+          />
+          <div className="font-regular text-[21px] max-sm:text-[18px] text-[#919193] max-md:text-center">The all-in-one toolkit for building smart contracts on HyperEVM</div>
+        </div>
+        <div className="flex justify-center space-x-2">
+          <HomePage.Button href="/getting-started" variant="accent">Get started</HomePage.Button>
+          <HomePage.Button href="https://github.com/hyperliquid-dev/hyper-evm-lib">GitHub</HomePage.Button>
+          <HomePage.Button href="/example">Examples</HomePage.Button>
+        </div>
+      </div>
+        <div className="flex flex-col justify-between space-y-4 w-full max-w-[500px]">
+          <div id="home-install">
+            ```bash [Install]
+            forge install hyperliquid-dev/hyper-evm-lib
+            echo "@hyper-evm-lib=lib/hyper-evm-lib" >> remappings.txt
+            ```
+          </div>
+          <div className="flex justify-between space-x-2">
+                <a href="https://github.com/hyperliquid-dev/hyper-evm-lib/stargazers" className="cursor-pointer h-[36px] max-w-[120px] flex-1 relative rounded-lg overflow-hidden border border-black/10 dark:border-white/20" style={{ color: 'inherit' }} rel="noreferrer noopener" target="_blank">
+      <div className="absolute flex z-[1] p-[6px] h-full w-full">
+        <div className="bg-white/60 dark:bg-black/40 flex items-center justify-center rounded-md px-3 py-1">
+          <span className="font-medium text-[15px] opacity-80 leading-none text-center">stars</span>
+        </div>
+        <div className="flex items-center h-full px-2 ml-1">
+          <span className="font-medium text-[15px] text-center leading-none w-full text-black dark:text-white">—</span>
+        </div>
+      </div>
+      <div className="absolute left-0 right-0 top-0 bottom-0 bg-amber-500 opacity-10 z-[0]" />
+      <div className="absolute left-0 right-0 top-0 bottom-0 backdrop-blur-[2px] backdrop-filter z-0" />
+    </a>
+    <a href="https://github.com/hyperliquid-dev/hyper-evm-lib/graphs/contributors" className="cursor-pointer h-[36px] max-w-[160px] flex-1 relative rounded-lg overflow-hidden border border-green-400/50" style={{ color: 'inherit' }} rel="noreferrer noopener" target="_blank">
+      <div className="absolute flex z-[1] p-[6px] h-full w-full">
+        <div className="flex-1 bg-white/60 dark:bg-black/40 flex items-center w-full h-full rounded-md">
+          <span className="font-medium text-[15px] leading-none opacity-80 w-full text-center">contributors</span>
+        </div>
+        <div className="flex items-center h-full px-2">
+          <span className="font-medium text-[15px] leading-none text-center w-full text-green-400">—</span>
+        </div>
+      </div>
+      <div className="absolute left-0 right-0 top-0 bottom-0 bg-green-400 opacity-10 z-[0]" />
+      <div className="absolute left-0 right-0 top-0 bottom-0 backdrop-blur-[2px] backdrop-filter z-0" />
+    </a>
+    <a href="https://github.com/hyperliquid-dev/hyper-evm-lib/blob/main/LICENSE" className="cursor-pointer h-[36px] max-w-[130px] flex-1 relative rounded-lg overflow-hidden border border-black/10 dark:border-white/20 max-lg:hidden" style={{ color: 'inherit' }} rel="noreferrer noopener" target="_blank">
+      <div className="absolute flex z-[1] p-[6px] h-full w-full">
+        <div className="flex-1 bg-white/60 dark:bg-black/40 flex items-center w-full h-full rounded-md">
+          <span className="font-medium text-[15px] leading-none opacity-80 w-full text-center">license</span>
+        </div>
+        <div className="flex items-center h-full px-2">
+          <span className="font-medium text-[15px] leading-none text-center w-full text-black dark:text-white">MIT</span>
+        </div>
+      </div>
+      <div className="absolute left-0 right-0 top-0 bottom-0 bg-black/5 dark:bg-white/5 z-[0]" />
+      <div className="absolute left-0 right-0 top-0 bottom-0 backdrop-blur-[2px] backdrop-filter z-0" />
+    </a>
+          </div>
+        </div>
+
+  </div>
+  <div className="flex justify-between flex-wrap mt-10 lg:mt-30">
+      <div className="pr-2 w-1/3 max-lg:pb-3 max-sm:px-0 max-lg:w-full max-sm:w-full z-0">
+        <div className="relative w-full h-[168px] max-lg:h-[142px] overflow-hidden">
+          <a href="/corewriter" className="hover:bg-black/2 dark:hover:bg-white/2 border-black/10 dark:border-white/10 border border-solid rounded-lg h-full px-5 py-6 absolute z-10 flex flex-col justify-between w-full vocs_Link vocs_Link_styleless">
+            <div className="text-xl font-medium text-black dark:text-white">HyperCore Library</div>
+            <div className="text-[17px] text-[#919193]">Helper functions for bridging, precompiles and corewriter actions</div>
+          </a>
+          <div className="absolute left-0 right-0 top-0 bottom-0 dark:bg-[#313136] opacity-20 z-0" />
+          <div className="absolute left-0 right-0 top-0 bottom-0 backdrop-filter backdrop-blur-[2px] z-0" />
+        </div>
+      </div>
+      <div className="px-2 w-1/3 max-lg:pb-3 max-sm:px-0 max-lg:w-full max-sm:w-full z-0">
+        <div className="relative w-full h-[168px] max-lg:h-[142px]">
+          <a href="/token-registry" className="hover:bg-black/2 dark:hover:bg-white/2 border-black/10 dark:border-white/10 border border-solid rounded-lg h-full px-5 py-6 absolute z-10 flex flex-col justify-between w-full vocs_Link vocs_Link_styleless">
+            <div className="text-xl font-medium text-black dark:text-white">TokenRegistry</div>
+            <div className="text-[17px] text-[#919193]">Resolve token and spot indexes from EVM addresses</div>
+          </a>
+          <div className="absolute left-0 right-0 top-0 bottom-0 dark:bg-[#313136] opacity-20 z-0" />
+          <div className="absolute left-0 right-0 top-0 bottom-0 backdrop-filter backdrop-blur-[2px] z-0" />
+        </div>
+      </div>
+      <div className="pl-2 w-1/3 max-lg:pb-3 max-sm:px-0 max-lg:w-full max-sm:w-full z-0">
+        <div className="relative w-full h-[168px] max-lg:h-[142px]">
+          <a href="/testing-framework" className="hover:bg-black/2 dark:hover:bg-white/2 border-black/10 dark:border-white/10 border border-solid rounded-lg h-full px-5 py-6 absolute z-10 flex flex-col justify-between w-full vocs_Link vocs_Link_styleless">
+            <div className="text-xl font-medium text-black dark:text-white">Local HyperCore Testing</div>
+            <div className="text-[17px] text-[#919193]">Simulate bridging, precompiles, and corewriter actions all within a foundry test</div>
+          </a>
+          <div className="absolute left-0 right-0 top-0 bottom-0 dark:bg-[#313136] opacity-20 z-0" />
+          <div className="absolute left-0 right-0 top-0 bottom-0 backdrop-filter backdrop-blur-[2px] z-0" />
+        </div>
       </div>
     </div>
-  </div>
-
-  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 12, marginTop: 32 }}>
-    <a href="/corewriter" style={{ display: 'block', textDecoration: 'none', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 12, padding: 16 }}>
-      <div style={{ fontSize: 18, fontWeight: 600, color: 'inherit' }}>CoreWriter actions</div>
-      <div style={{ color: '#919193', marginTop: 6 }}>Bridge tokens and invoke CoreWriter with ergonomic overloads</div>
-    </a>
-    <a href="/precompiles" style={{ display: 'block', textDecoration: 'none', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 12, padding: 16 }}>
-      <div style={{ fontSize: 18, fontWeight: 600, color: 'inherit' }}>Read precompiles</div>
-      <div style={{ color: '#919193', marginTop: 6 }}>Query native read precompiles, including address-based helpers</div>
-    </a>
-    <a href="/token-registry" style={{ display: 'block', textDecoration: 'none', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 12, padding: 16 }}>
-      <div style={{ fontSize: 18, fontWeight: 600, color: 'inherit' }}>TokenRegistry</div>
-      <div style={{ color: '#919193', marginTop: 6 }}>Resolve token and spot indexes from EVM addresses</div>
-    </a>
-    <a href="/testing-framework" style={{ display: 'block', textDecoration: 'none', border: '1px solid rgba(0,0,0,0.1)', borderRadius: 12, padding: 16 }}>
-      <div style={{ fontSize: 18, fontWeight: 600, color: 'inherit' }}>Full testing framework</div>
-      <div style={{ color: '#919193', marginTop: 6 }}>Simulate bridging, precompiles, and CoreWriter actions end-to-end</div>
-    </a>
-  </div>
+    </div>
 </div>
 
-## Quick install
+<article className="vocs_Content max-w-5xl mx-auto center">
 
-```bash
+# Quick Actions
+
+---
+
+:::code-group
+
+```bash [Install]
 forge install hyperliquid-dev/hyper-evm-lib
 echo "@hyper-evm-lib=lib/hyper-evm-lib" >> remappings.txt
 ```
+
+:::
+
+</article>
