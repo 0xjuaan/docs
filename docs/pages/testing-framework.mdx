@@ -8,40 +8,81 @@ The testing framework simulates HyperCore interactions so you can test end-to-en
 - Test CoreWriter actions
 - Read updated precompile data after CoreWriter actions
 
-### Why it's needed
+## Why it's needed
 
 Testing CoreWriter actions and their state changes is not possible today. This framework makes it possible by simulating HyperCore state. After a CoreWriter action, it updates precompile data so tests can read the new values right away. It also works with forked tests that start from the current state, the simulator updates the state from that point. 
 
-### How to use it
+## Usage
 
 Inherit `BaseSimulatorTest` in your tests. It handles the simulator setup, provides common token addresses and indices, and creates a `user` with $1,000 USDC in their Spot and Perp accounts on core.
 
 CoreWriter actions only execute in the following blocks. Call the `CoreSimulatorLib.nextBlock()` function to move forward: it increases the block number and timestamp, executes all pending CoreWriter actions from the previous block and applies their state changes, then precompile reads will reflect the updated state.
 
-### Acknowledgements
+### Example 
 
-This work builds on the simulator by Cain from Hyperdrive. We adopted the core approach and added major changes, including forked testing to run against current chain state and support for Spot/Perp trading, among many others. See the original repo here: [hypercore-sim](https://github.com/ambitlabsxyz/hypercore/tree/main/packages/hypercore-sim).
-
-
-
-
-## Example
+The test below inherits `BaseSimulatorTest`, deploys the `VaultExample` contract, funds its perp balance, deposits to a vault, advances one block via `nextBlock` to apply CoreWriter updates, asserts an early withdrawal reverts due to the lockup period, warps `block.timestamp` past it, withdraws from the vault, advances another block, then verifies the perp balance is restored.
 
 ```solidity
-// Pseudocode
-setUpHyperCoreHarness();
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
 
-address usdc = deployTestToken(6);
-address user = address(0xBEEF);
+import {console} from "forge-std/Test.sol";
 
-// Simulate bridging to Core
-uint256 coreAmount = PrecompileLib.convertEvmToCoreAmount(usdc, 1_000_000);
-CoreWriterLib.bridgeToCore(usdc, coreAmount, user);
+import {BaseSimulatorTest} from "@hyper-evm-lib/test/BaseSimulatorTest.sol";
+import {VaultExample} from "@hyper-evm-lib/src/examples/VaultExample.sol";
+import {PrecompileLib} from "@hyper-evm-lib/src/PrecompileLib.sol";
+import {CoreWriterLib} from "@hyper-evm-lib/src/CoreWriterLib.sol";
+import {CoreSimulatorLib} from "@hyper-evm-lib/test/simulation/CoreSimulatorLib.sol";
 
-// Validate Core state via precompiles
-uint256 bal = PrecompileLib.spotBalanceByAddress(usdc, user);
-assert(bal == coreAmount);
+contract ExampleVaultTest is BaseSimulatorTest {
+    function test_exampleVaultDepositAndWithdraw() public {
+        VaultExample vaultExampleContract = new VaultExample();
+        hyperCore.forceAccountCreation(address(vaultExampleContract));
+        hyperCore.forcePerpBalance(address(vaultExampleContract), 1000e6);
+
+        address testVault = 0x07Fd993f0fA3A185F7207ADcCD29f7A87404689D;
+        uint64 depositAmount = 100e6;
+
+        uint64 balanceBefore = PrecompileLib.withdrawable(address(vaultExampleContract));
+        console.log("Perp balance before deposit:", balanceBefore);
+
+        vaultExampleContract.depositToVault(testVault, depositAmount);
+        CoreSimulatorLib.nextBlock();
+        console.log("Perp balance after deposit:", PrecompileLib.withdrawable(address(vaultExampleContract)));
+
+        // Try to withdraw before the lock period expires - should revert
+        PrecompileLib.UserVaultEquity memory vaultEquity =
+            PrecompileLib.userVaultEquity(address(vaultExampleContract), testVault);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                CoreWriterLib.CoreWriterLib__StillLockedUntilTimestamp.selector,
+                vaultEquity.lockedUntilTimestamp
+            )
+        );
+        vaultExampleContract.withdrawFromVault(testVault, depositAmount);
+
+        vm.warp(block.timestamp + 1 days + 1);
+
+        vaultExampleContract.withdrawFromVault(testVault, depositAmount);
+        CoreSimulatorLib.nextBlock();
+
+        uint64 balanceAfter = PrecompileLib.withdrawable(address(vaultExampleContract));
+        console.log("Perp balance after withdraw:", balanceAfter);
+
+        assertEq(balanceBefore, balanceAfter);
+    }
+}
 ```
 
-Refer to repository tests for full harness utilities and fixtures.
+### How it works
+
+`HyperCore` is a contract that replicates HyperCore state and behaviour for tests. It inherits three contracts: `CoreState.sol`, which holds all state (accounts, spot balances, perp positions and margin, staking, vault equity); `CoreView.sol`, which exposes read functions used by precompiles; and `CoreExecution.sol`, which applies all writes such as token/native transfers, spot and perp orders, vault transfers, staking and delegations, and more. Precompile reads go through `CoreView.sol`, so they return the simulator’s updated state.
+
+Precompile calls are handled by `PrecompileSim.sol`, which is etched at each precompile address. When a precompile is called, its fallback forwards the read into `HyperCore` via the matching `CoreView` function. `CoreView` then does a conditional: if the value is already initialized in local state, it returns that; if not, it performs a live RPC read via `RealL1Read.sol` and returns the onchain value. 
+
+CoreWriter actions are handled through `CoreWriterSim.sol`. It encodes all incoming CoreWriter calls into an ordered queue. When `CoreSimulatorLib.nextBlock()` is called to advance to the next block, it executes the queued actions in order by calling the relevant `execute*` functions on `HyperCore` and applies their state changes. Before applying each write, `CoreExecution` runs initializers (`initAccountWithToken`, `initAccount`, `initAccountWithPerp`) to initialise the required state by fetching current onchain values via `RealL1Read.sol` then the local state is updated, and subsequent precompile reads come from the stored state, not another RPC call. 
+
+### Acknowledgements
+
+This work builds on the simulator by Cain from Hyperdrive. We adopted the core approach and added major changes, including support for forked testing to run against current chain state and support for Spot/Perp trading, among many others. See the original repo here: [hypercore-sim](https://github.com/ambitlabsxyz/hypercore/tree/main/packages/hypercore-sim).
 
