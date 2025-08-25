@@ -2,30 +2,31 @@
 title: PrecompileLib
 ---
 
-PrecompileLib exposes read-only access to native precompiles and adds helpers to use EVM token addresses instead of numeric indexes.
+# PrecompileLib
 
-## Why it matters
+A library to call HyperEVM precompiles, with additional functions to query data using EVM token addresses, removing the need to store or pass in the token/spot index.
 
-Native precompiles often require token or spot indexes. These are not derivable on-chain from the EVM address. PrecompileLib pairs with TokenRegistry to resolve indexes automatically.
+It also provides functionality to retrieve spot market IDs from token IDs, and from EVM addresses, abstracting this complexity from the developer, allowing them to focus on building the core business logic of their contracts.
 
-## Common reads
 
+## Why it's useful
+
+Native precompiles often require token or spot market indices. These are not derivable onchain from the EVM address, forcing developers to manually store or pass in the token/spot index. PrecompileLib pairs with [TokenRegistry](/dev/token-registry) to resolve indexes automatically.
+
+## Usage
+
+### Import
 ```solidity
-// Get spot balance for msg.sender by token address
-uint256 balance = PrecompileLib.spotBalanceByAddress(usdc, msg.sender);
-
-// Get spot price by address
-uint256 price = PrecompileLib.spotPxByAddress(usdc);
+import { PrecompileLib } from "@hyper-evm-lib/src/PrecompileLib.sol";
 ```
 
-## Index-based reads (native)
-
+### Sample usage
 ```solidity
-uint256 spotIdx = TokenRegistry.getSpotIndex(usdc);
-uint256 px = PrecompileLib.spotPx(spotIdx);
+uint64 uBTC_address = 0x9fdbda0a5e284c32744d2f17ee5c74b284993463;
+uint64 spotIndex = PrecompileLib.getSpotIndex(uBTC_address);
+
+// Equivalent ways of obtaining spot price (via index, or via address)
+uint64 spotPrice = PrecompileLib.spotPx(spotIndex); // 1000000000000000000
+uint64 spotPrice2 = PrecompileLib.spotPx(uBTC_address);
+
 ```
-
-## Notes
-
-- Precompile results reflect the beginning-of-block state; CoreWriter actions update next block.
-

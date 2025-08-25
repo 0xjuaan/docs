@@ -2,9 +2,49 @@
 title: TokenRegistry
 ---
 
-The [TokenRegistry](https://github.com/hyperliquid-dev/hyper-evm-lib/blob/main/src/registry/TokenRegistry.sol) provides an onchain mapping between EVM token addresses and their corresponding HyperCore token indexes, populated trustlessly using precompile lookups.
+# TokenRegistry
 
-`TokenRegistry` is deployed on HyperEVM mainnet at [0x0b51d1a9098cf8a72c325003f44c194d41d7a85b](https://hyperevmscan.io/address/0x0b51d1a9098cf8a72c325003f44c194d41d7a85b).
+### Motivation
+
+Precompiles like `spotBalance`, `spotPx` and more, all require either a token index (for `spotBalance`) or a spot market index (for `spotPx`) as an input parameter. Bridging an EVM token to HyperCore uses its token index to derive its system address.
+
+Natively, there is no way to derive the token index given a token's contract address, requiring developers to store it manually in their contracts, or pass it in as a parameter whenever needed.
+
+
+
+### Solution
+[`TokenRegistry`](https://github.com/hyperliquid-dev/hyper-evm-lib/blob/main/src/registry/TokenRegistry.sol) solves this by providing a deployed onchain mapping from EVM contract addresses to their HyperCore token indices, populated trustlessly using precompile lookups.
+
+
+```solidity
+function getTokenIndex(address evmContract) external view returns (uint32 index) {
+    TokenData memory data = addressToIndex[evmContract];
+
+    if (!data.isSet) {
+        revert TokenNotFound(evmContract);
+    }
+
+    return data.index;
+}
+
+/**
+* @notice Register a token by passing in its index
+* @param tokenIndex The index of the token to register
+* @dev Calls the token info precompile and stores the mapping
+*/
+function setTokenInfo(uint32 tokenIndex) public {
+    // call the precompile
+    address evmContract = getTokenAddress(tokenIndex);
+
+    if (evmContract == address(0)) {
+        revert NoEvmContract(tokenIndex);
+    }
+
+    addressToIndex[evmContract] = TokenData({index: tokenIndex, isSet: true});
+}
+
+```
+The contract is deployed on HyperEVM mainnet at [0x0b51d1a9098cf8a72c325003f44c194d41d7a85b](https://hyperevmscan.io/address/0x0b51d1a9098cf8a72c325003f44c194d41d7a85b).
 
 ### Usage
 
@@ -15,9 +55,6 @@ ITokenRegistry tokenRegistry = ITokenRegistry(0x0b51d1a9098cf8a72c325003f44c194d
 
 // Get the token index for an evm token address 
 uint32 tokenIdx = tokenRegistry.getTokenIndex(tokenAddress);
-
-// Read a user's spot balance using the token index
-uint256 spotBalance = PrecompileLib.spotBalance(tokenIdx, user);
 ```
 
 **Usage through PrecompileLib:** The `PrecompileLib` exposes a [getTokenIndex](https://github.com/hyperliquid-dev/hyper-evm-lib/blob/b347756c392934712af9c27b92028a00b93cb68c/src/PrecompileLib.sol#L61-L66) function to read from the `TokenRegistry`, and can be used instead of directly interacting with the `TokenRegistry` contract. 
@@ -25,15 +62,4 @@ uint256 spotBalance = PrecompileLib.spotBalance(tokenIdx, user);
 ```solidity
 uint64 tokenIdx = PrecompileLib.getTokenIndex(tokenAddress);
 ```
-
-### Motivation
-
-Precompiles like `spotBalance`, `spotPx` and more, all require either a token index (for `spotBalance`) or a spot market index (for `spotPx`) as an input parameter. Bridging an EVM token to HyperCore uses its token index to derive its system address (the `spotSend` destination).
-
-Natively, there is no way to derive the token index given a token's contract address, requiring projects to store it manually, or pass it in as a parameter whenever needed.
-
-`TokenRegistry` solves this by providing a deployed onchain mapping from EVM contract addresses to their HyperCore token indices, populated trustlessly using precompile lookups for each index.
-
-
-
 

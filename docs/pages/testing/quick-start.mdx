@@ -18,50 +18,35 @@ Call `CoreSimulatorLib.nextBlock()` to move to the next block and execute any qu
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import {console} from "forge-std/Test.sol";
-
-import {BaseSimulatorTest} from "@hyper-evm-lib/test/BaseSimulatorTest.sol";
-import {VaultExample} from "@hyper-evm-lib/src/examples/VaultExample.sol";
-import {PrecompileLib} from "@hyper-evm-lib/src/PrecompileLib.sol";
-import {CoreWriterLib} from "@hyper-evm-lib/src/CoreWriterLib.sol";
+import {Test} from "forge-std/Test.sol";
 import {CoreSimulatorLib} from "@hyper-evm-lib/test/simulation/CoreSimulatorLib.sol";
 
-contract ExampleVaultTest is BaseSimulatorTest {
-    function test_exampleVaultDepositAndWithdraw() public {
-        VaultExample vaultExampleContract = new VaultExample();
-        hyperCore.forceAccountActivation(address(vaultExampleContract));
-        hyperCore.forcePerpBalance(address(vaultExampleContract), 1000e6);
+contract ExampleTest is Test {
 
-        address testVault = 0x07Fd993f0fA3A185F7207ADcCD29f7A87404689D;
-        uint64 depositAmount = 100e6;
+    function setUp() public {
+        vm.createSelectFork("https://rpc.hyperliquid.xyz/evm");
 
-        uint64 balanceBefore = PrecompileLib.withdrawable(address(vaultExampleContract));
+        // initialize the HyperCore simulator
+        CoreSimulatorLib.init();
+    }
 
-        vaultExampleContract.depositToVault(testVault, depositAmount);
+    function test() public { 
+
+        // Make any smart contract calls, 
+        // all CoreWriter and token bridging actions will be queued
+
+        ...
+
+        // move to the next block, performing all queued CoreWriter and bridging actions
         CoreSimulatorLib.nextBlock();
 
-        // Try to withdraw before the lock period expires - should revert
-        PrecompileLib.UserVaultEquity memory vaultEquity =
-            PrecompileLib.userVaultEquity(address(vaultExampleContract), testVault);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                CoreWriterLib.CoreWriterLib__StillLockedUntilTimestamp.selector,
-                vaultEquity.lockedUntilTimestamp
-            )
-        );
-        vaultExampleContract.withdrawFromVault(testVault, depositAmount);
-
-        vm.warp(block.timestamp + 1 days + 1);
-
-        vaultExampleContract.withdrawFromVault(testVault, depositAmount);
-        CoreSimulatorLib.nextBlock();
-
-        uint64 balanceAfter = PrecompileLib.withdrawable(address(vaultExampleContract));
-
-        assertEq(balanceBefore, balanceAfter);
+        // Now, all precompiles calls will be 
+        //updated to account for the above executed actions
     }
 }
+
 ```
+
 
 ### Test utility functions
 
@@ -82,8 +67,8 @@ contract ExampleVaultTest is BaseSimulatorTest {
 
 Two gaps today: 
 
-1. Normal Tests can’t read HyperCore precompiles
-2. They also can’t execute CoreWriter actions and observe their state changes. 
+1. Normal Tests can't read HyperCore precompiles
+2. They also can't execute CoreWriter actions and observe their state changes. 
 
 This framework solves both by reading precompiles via RPC on first access and caching them locally, and by queuing CoreWriter actions to execute on the next block (via `CoreSimulatorLib.nextBlock()`), which applies state updates so subsequent precompile reads reflect the new state.
 
@@ -97,5 +82,5 @@ CoreWriter actions are handled through `CoreWriterSim.sol`. It encodes all incom
 
 ### Acknowledgements
 
-This work builds on the simulator by Cain from Hyperdrive. We adopted the core approach and added major changes, including support for forked testing to run against current chain state and support for Spot/Perp trading, among many others. See the original repo here: [hypercore-sim](https://github.com/ambitlabsxyz/hypercore/tree/main/packages/hypercore-sim).
+This work builds on the simulator by Cain from Hyperdrive. We adopted the core action queuing system and added major changes, including support for forked testing, support for Spot/Perp trading, among many others. See the original repo here: [hypercore-sim](https://github.com/ambitlabsxyz/hypercore/tree/main/packages/hypercore-sim).
 

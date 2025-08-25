@@ -20,7 +20,9 @@ uint256 px = PrecompileLib.spotPxByAddress(usdc);
 
 See the repository `examples/` directory for full working examples.
 
-### For Testing Contracts
+## For Testing Contracts
+
+### Bridging
 ```solidity
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
@@ -59,6 +61,58 @@ contract ExampleTest is Test {
 contract ExampleContract {
     function bridgeToCore(uint64 tokenId, uint256 evmAmount) external payable {
         CoreWriterLib.bridgeToCore(tokenId, evmAmount);
+    }
+}
+```
+
+### Vault deposit
+This example inherits from [`BaseSimulatorTest`](https://github.com/hyperliquid-dev/hyper-evm-lib/blob/e93d90205d9c0daddc5c0937ee8c94c211de9979/test/BaseSimulatorTest.sol) which performs the basic setup. 
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import {console} from "forge-std/Test.sol";
+
+import {BaseSimulatorTest} from "@hyper-evm-lib/test/BaseSimulatorTest.sol";
+import {VaultExample} from "@hyper-evm-lib/src/examples/VaultExample.sol";
+import {PrecompileLib} from "@hyper-evm-lib/src/PrecompileLib.sol";
+import {CoreWriterLib} from "@hyper-evm-lib/src/CoreWriterLib.sol";
+import {CoreSimulatorLib} from "@hyper-evm-lib/test/simulation/CoreSimulatorLib.sol";
+
+contract ExampleVaultTest is BaseSimulatorTest {
+    function test_exampleVaultDepositAndWithdraw() public {
+        VaultExample vaultExampleContract = new VaultExample();
+        hyperCore.forceAccountActivation(address(vaultExampleContract));
+        hyperCore.forcePerpBalance(address(vaultExampleContract), 1000e6);
+
+        address testVault = 0x07Fd993f0fA3A185F7207ADcCD29f7A87404689D;
+        uint64 depositAmount = 100e6;
+
+        uint64 balanceBefore = PrecompileLib.withdrawable(address(vaultExampleContract));
+
+        vaultExampleContract.depositToVault(testVault, depositAmount);
+        CoreSimulatorLib.nextBlock();
+
+        // Try to withdraw before the lock period expires - should revert
+        PrecompileLib.UserVaultEquity memory vaultEquity =
+            PrecompileLib.userVaultEquity(address(vaultExampleContract), testVault);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                CoreWriterLib.CoreWriterLib__StillLockedUntilTimestamp.selector,
+                vaultEquity.lockedUntilTimestamp
+            )
+        );
+        vaultExampleContract.withdrawFromVault(testVault, depositAmount);
+
+        vm.warp(block.timestamp + 1 days + 1);
+
+        vaultExampleContract.withdrawFromVault(testVault, depositAmount);
+        CoreSimulatorLib.nextBlock();
+
+        uint64 balanceAfter = PrecompileLib.withdrawable(address(vaultExampleContract));
+
+        assertEq(balanceBefore, balanceAfter);
     }
 }
 ```
