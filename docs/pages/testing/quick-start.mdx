@@ -2,13 +2,8 @@
 title: Testing Framework
 ---
 
-The testing framework simulates HyperCore interactions so you can test end-to-end flows:
-
-- Full bridging flows between EVM and HyperCore
-- Test CoreWriter actions
-- Read updated precompile data after CoreWriter actions
-
-### How to use it
+# Testing Framework
+## How to use it
 
 Inherit `BaseSimulatorTest` in your tests. It handles the simulator setup, and provides common constants used in testing. 
 
@@ -63,15 +58,6 @@ contract ExampleTest is Test {
 - `forceVaultEquity`: set an account's vault equity and lock timestamp for a vault
 
 
-### Why it's needed
-
-Two gaps today: 
-
-1. Normal Tests can't read HyperCore precompiles
-2. They also can't execute CoreWriter actions and observe their state changes. 
-
-This framework solves both by reading precompiles via RPC on first access and caching them locally, and by queuing CoreWriter actions to execute on the next block (via `CoreSimulatorLib.nextBlock()`), which applies state updates so subsequent precompile reads reflect the new state.
-
 ### How it works
 
 `HyperCore` is a contract that replicates HyperCore state and behaviour for tests. It inherits three contracts: `CoreState.sol`, which holds all state (accounts, spot balances, perp positions and margin, staking, vault equity); `CoreView.sol`, which exposes read functions used by precompiles; and `CoreExecution.sol`, which applies all writes such as token/native transfers, spot and perp orders, vault transfers, staking and delegations, and more. Precompile reads go through `CoreView.sol`, so they return the simulator’s updated state.
@@ -79,8 +65,4 @@ This framework solves both by reading precompiles via RPC on first access and ca
 Precompile calls are handled by `PrecompileSim.sol`, which is etched at each precompile address. When a precompile is called, its fallback forwards the read into `HyperCore` via the matching `CoreView` function. `CoreView` then does a conditional: if the value is already initialized in local state, it returns that; if not, it performs a live RPC read via `RealL1Read.sol` and returns the onchain value. 
 
 CoreWriter actions are handled through `CoreWriterSim.sol`. It encodes all incoming CoreWriter calls into an ordered queue. When `CoreSimulatorLib.nextBlock()` is called to advance to the next block, it executes the queued actions in order by calling the relevant `execute*` functions on `HyperCore` and applies their state changes. Before applying each write, `CoreExecution` runs initializers (`initAccountWithToken`, `initAccount`, `initAccountWithPerp`) to initialise the required state by fetching current onchain values via `RealL1Read.sol` then the local state is updated, and subsequent precompile reads come from the stored state, not another RPC call. 
-
-### Acknowledgements
-
-This work builds on the simulator by Cain from Hyperdrive. We adopted the core action queuing system and added major changes, including support for forked testing, support for Spot/Perp trading, among many others. See the original repo here: [hypercore-sim](https://github.com/ambitlabsxyz/hypercore/tree/main/packages/hypercore-sim).
 

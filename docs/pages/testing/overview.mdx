@@ -1,9 +1,29 @@
 ---
 title: Testing Framework
 ---
+# Testing Framework
 
-The testing framework simulates HyperCore interactions so you can test end-to-end flows:
+A robust and flexible simulation engine for HyperCore interactions, for **local foundry testing** of precompile calls, CoreWriter actions, and EVM⇄Core token bridging.
 
-- Full bridging flows between EVM and HyperCore
-- Test CoreWriter actions
-- Read updated precompile data after CoreWriter actions
+This enables developers to test their contracts in a local environment, within seconds, without needing to spend hours deploying and testing on testnet. 
+
+
+### Why it's needed
+
+Two gaps today: 
+
+1. Foundry tests do not support reading HyperEVM precompiles, causing tests to revert whenever precompiles are called
+2. They can't execute CoreWriter actions and observe their state changes, which is a major limitation for testing end-to-end flows. 
+
+Due to this, the only way to test precompiles and CoreWriter actions had been to deploy to testnet, and manually send transactions, which is time-consuming and inflexible (does not allow for quick iteration, or reversing actions).
+
+### Solution
+
+This framework solves both by reading precompiles via RPC on first access and caching them locally, and by queuing CoreWriter actions to execute on the next block (via `CoreSimulatorLib.nextBlock()`), which applies state updates so subsequent precompile reads reflect the new state.
+
+It also actively listens for ERC20.Transfer events, to identify token bridging actions (if the tokens were transferred to their system address), and queues them for execution on the next block.
+
+### Acknowledgements
+
+This work builds on the simulator by Cain from Hyperdrive. We adopted the core action queuing system and added major changes, including support for forked testing, support for Spot/Perp trading, among many others. See the original repo here: [hypercore-sim](https://github.com/ambitlabsxyz/hypercore/tree/main/packages/hypercore-sim).
+
