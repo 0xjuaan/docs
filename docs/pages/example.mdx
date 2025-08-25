@@ -9,15 +9,15 @@ Below are some example snippets to help you get started.
 ## Bridging tokens
 
 ```solidity
-uint256 coreAmount = PrecompileLib.convertEvmToCoreAmount(usdc, evmAmount);
-CoreWriterLib.bridgeToCore(usdc, coreAmount, coreRecipient);
+uint256 coreAmount = PrecompileLib.convertEvmToCoreAmount(uBTC, evmAmount);
+CoreWriterLib.bridgeToCore(uBTC, coreAmount, coreRecipient);
 ```
 
 ## Reading precompiles by EVM address
 
 ```solidity
-uint256 spotIdx = TokenRegistry.getSpotIndex(usdc);
-uint256 px = PrecompileLib.spotPxByAddress(usdc);
+uint256 spotIdx = TokenRegistry.getSpotIndex(uBTC);
+uint256 px = PrecompileLib.spotPxByAddress(uBTC);
 ```
 
 See the repository `examples/` directory for full working examples.
