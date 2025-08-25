@@ -31,7 +31,6 @@ export default defineConfig({
       items: [
         { text: 'Overview', link: '/testing/overview' },
         { text: 'Quick start', link: '/testing/quick-start' },
-        { text: 'Cheatcodes', link: '/testing/cheatcodes' },
       ],
     },
     { text: 'Examples', link: '/example' },

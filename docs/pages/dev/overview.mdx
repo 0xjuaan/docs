@@ -1,0 +1,34 @@
+---
+title: Overview
+---
+
+# Overview
+
+## Key Components
+
+### CoreWriterLib
+
+Includes functions to call `CoreWriter` actions, and also has helpers to:
+
+* Bridge tokens to/from Core
+* Convert spot token amount representation between EVM and Core (wei) decimals'
+
+Check out the [CoreWriterLib](/dev/corewriter) documentation for more details.
+
+### PrecompileLib
+
+Includes functionality to query the native read precompiles. 
+
+PrecompileLib includes additional functions to query data using EVM token addresses, removing the need to store or pass in the token/spot index. 
+
+Check out the [PrecompileLib](/dev/precompiles) documentation for more details.
+
+### TokenRegistry
+
+Precompiles like `spotBalance`, `spotPx` and more, all require either a token index (for `spotBalance`) or a spot market index (for `spotPx`) as an input parameter.
+
+Natively, there is no way to derive the token index given a token's contract address, requiring projects to store it manually, or pass it in as a parameter whenever needed.
+
+[TokenRegistry](https://github.com/hyperliquid-dev/hyper-evm-lib/blob/main/src/registry/TokenRegistry.sol) solves this by providing a deployed-onchain mapping from EVM contract addresses to their HyperCore token indices, populated trustlessly using precompile lookups for each index.
+
+Check out the [TokenRegistry](/dev/token-registry) documentation for more details.
