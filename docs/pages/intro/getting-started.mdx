@@ -28,7 +28,7 @@ contract Example {
     function getSpotBalance(address tokenAddress) external view returns (uint256) {
 
         // Get spot balance using tokenAddress 
-        // (the address is converted under-the-hood to tokenId using TokenRegistry)
+        // (the address is converted under the hood to tokenId using TokenRegistry)
         PrecompileLib.SpotBalance memory spotBalance = 
             PrecompileLib.spotBalance(address(this), tokenAddress);
         return spotBalance.total;
