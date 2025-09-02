@@ -69,3 +69,4 @@ Precompile calls are handled by `PrecompileSim.sol`, which is etched at each pre
 
 CoreWriter actions are handled through `CoreWriterSim.sol`. It stores all incoming CoreWriter calls in a queue. When `CoreSimulatorLib.nextBlock()` is called, it executes the queued actions by calling the relevant execute functions on `HyperCore` and applies their state changes. Before applying each write, CoreExecution runs initializers to initialise the relevant state by fetching current onchain values. Then, the local state is updated, and subsequent precompile reads will use the stored state.
 
+Check out these test contracts [here](https://github.com/hyperliquid-dev/hyper-evm-lib/tree/main/test/simulation) for more info.
