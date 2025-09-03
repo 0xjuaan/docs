@@ -48,18 +48,51 @@ Alternatively, you could inherit [`BaseSimulatorTest`](https://github.com/hyperl
 
 ### Test utility functions
 
-- `setRevertOnFailure`: make queued CoreWriter actions revert on failure (defaults to false to mimic onchain behavior).
-- `setMarkPx`: set a token's mark price or adjust by bps to test trading PnL.
-- `setSpotPx`: set a spot market's price 
-- `setVaultMultiplier`: scale vault equity to simulate profit/loss scenarios.
 
-- `forceAccountActivation`: activate a Core account.
-- `forceSpot`: set an account's spot balance for a token
-- `forcePerpBalance`: set an account's withdrawable perp USD.
-- `forceStaking`: set an account's staking balance.
-- `forceDelegation`: set an account's delegation amount and locked until timestamp for a validator.
-- `forceVaultEquity`: set an account's vault equity and lock timestamp for a vault
+These functions in `CoreSimulatorLib` work similar to Foundry's [cheatcodes](https://getfoundry.sh/reference/cheatcodes/overview) and allow you to manipulate state and configuration for testing purposes.
 
+#### Test Config
+```solidity
+// force activate a Core account (without having to transfer tokens and pay the $1 fee)
+function forceAccountActivation(address account) internal;
+```
+
+#### Price Setters
+```solidity
+// set the mark price of a perp market
+function setMarkPx(uint32 perp, uint64 markPx) internal;
+
+// set the mark price by specifying a price difference in bps
+function setMarkPx(uint32 perp, uint64 priceDiffBps, bool isIncrease) internal;
+
+// set the price of a spot market
+function setSpotPx(uint32 spotMarketId, uint64 spotPx) internal;
+
+// set the spot price by specifying a price difference in bps
+function setSpotPx(uint32 spotMarketId, uint64 priceDiffBps, bool isIncrease) internal;
+
+// scale vault equity to simulate profit/loss scenarios
+function setVaultMultiplier(address vault, uint64 multiplier) internal;
+
+```
+#### Balance Setters
+
+```solidity
+// set an account's spot balance for a token
+function forceSpotBalance(address account, uint64 token, uint64 _wei) internal;
+
+// set an account's withdrawable perp USD
+function forcePerpBalance(address account, uint64 usd) internal;
+
+// set an account's staking balance
+function forceStakingBalance(address account, uint64 _wei) internal;
+
+// set an account's delegation amount and locked until timestamp for a validator
+function forceDelegation(address account, address validator, uint64 amount, uint64 lockedUntilTimestamp) internal;
+
+// set an account's vault equity and lock timestamp for a vault
+function forceVaultEquity(address account, address vault, uint64 usd, uint64 lockedUntilTimestamp) internal;
+```
 
 ### How it works
 
