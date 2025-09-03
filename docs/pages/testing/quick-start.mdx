@@ -5,9 +5,13 @@ title: Testing Framework
 # Testing Framework
 ## How to use it
 
-Import `CoreSimulatorLib` as shown in the example, and call the `init()` function
+First, ensure you have installed `hyper-evm-lib` in your foundry project. Instructions [here](https://www.hyperlib.dev/intro/getting-started#installation)
 
-Then, call `CoreSimulatorLib.nextBlock()` in your test to move to the next block and execute any queued CoreWriter actions.
+Then, in your test file, import `CoreSimulatorLib` as shown in the example, and call `CoreSimulatorLib.init()` in the `setUp()`.
+
+
+
+Then, call `CoreSimulatorLib.nextBlock()` in your tests to simulate moving to the next block and execute any queued CoreWriter actions.
 
 Example:
 
@@ -34,7 +38,8 @@ contract ExampleTest is Test {
 
         ...
 
-        // move to the next block, performing all queued CoreWriter and bridging actions
+        // move to the next block, 
+        // performing all queued CoreWriter and bridging actions
         CoreSimulatorLib.nextBlock();
 
         // Now, all precompiles calls will be 
