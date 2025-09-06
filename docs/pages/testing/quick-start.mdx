@@ -77,10 +77,10 @@ function setSpotPx(uint32 spotMarketId, uint64 priceDiffBps, bool isIncrease) in
 #### Yield/loss accrual
 
 // scale vault equity to simulate profit/loss scenarios
-function setVaultMultiplier(address vault, uint64 multiplier) internal;
+function setVaultMultiplier(address vault, uint256 multiplier) internal;
 
 // simulate staking yield
-function setStakingMultiplier(uint64 multiplier) internal;
+function setStakingYieldIndex(uint256 multiplier) internal;
 
 ```
 #### Balance Setters
