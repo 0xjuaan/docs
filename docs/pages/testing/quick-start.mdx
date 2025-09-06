@@ -7,13 +7,11 @@ title: Testing Framework
 
 First, ensure you have installed `hyper-evm-lib` in your foundry project. Instructions [here](https://www.hyperlib.dev/intro/getting-started#installation)
 
-Then, in your test file, import `CoreSimulatorLib` as shown in the example, and call `CoreSimulatorLib.init()` in the `setUp()`.
-
-
+Then, in your test file, import `CoreSimulatorLib` as shown in the template, and call `CoreSimulatorLib.init()` in the `setUp()`.
 
 Then, call `CoreSimulatorLib.nextBlock()` in your tests to simulate moving to the next block and execute any queued CoreWriter (or token bridging) actions.
 
-Example:
+Usage Template:
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -22,7 +20,7 @@ pragma solidity ^0.8.0;
 import {Test} from "forge-std/Test.sol";
 import {CoreSimulatorLib} from "@hyper-evm-lib/test/simulation/CoreSimulatorLib.sol";
 
-contract ExampleTest is Test {
+contract TemplateTest is Test {
 
     function setUp() public {
         vm.createSelectFork("https://rpc.hyperliquid.xyz/evm");
