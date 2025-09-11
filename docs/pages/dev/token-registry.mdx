@@ -13,7 +13,9 @@ Natively, there is no way to derive the token index given a token's contract add
 
 
 ### Solution
-[`TokenRegistry`](https://github.com/hyperliquid-dev/hyper-evm-lib/blob/main/src/registry/TokenRegistry.sol) solves this by providing a deployed onchain mapping from EVM contract addresses to their HyperCore token indices, populated trustlessly using precompile lookups.
+The [`TokenRegistry`](https://github.com/hyperliquid-dev/hyper-evm-lib/blob/main/src/registry/TokenRegistry.sol) solves this by providing a deployed onchain mapping from EVM contract addresses to their HyperCore token indices.
+
+**Note:** The stored data is populated using precompile calls as the sole source of truth, and can be populated by anyone calling [`setTokenInfo()`](https://github.com/hyperliquid-dev/hyper-evm-lib/blob/518baac1462217e4f5d14277641e38431073d171/src/registry/TokenRegistry.sol#L37-L46) or [`batchSetTokenIndex()`](https://github.com/hyperliquid-dev/hyper-evm-lib/blob/518baac1462217e4f5d14277641e38431073d171/src/registry/TokenRegistry.sol#L54-L60)
 
 
 ```solidity
@@ -44,7 +46,7 @@ function setTokenInfo(uint32 tokenIndex) public {
 }
 
 ```
-The contract is deployed on HyperEVM mainnet at [0x0b51d1a9098cf8a72c325003f44c194d41d7a85b](https://hyperevmscan.io/address/0x0b51d1a9098cf8a72c325003f44c194d41d7a85b).
+The contract is deployed on HyperEVM mainnet and testnet at [0x0b51d1a9098cf8a72c325003f44c194d41d7a85b](https://hyperevmscan.io/address/0x0b51d1a9098cf8a72c325003f44c194d41d7a85b).
 
 ### Usage
 
@@ -57,7 +59,9 @@ ITokenRegistry tokenRegistry = ITokenRegistry(0x0b51d1a9098cf8a72c325003f44c194d
 uint32 tokenIdx = tokenRegistry.getTokenIndex(tokenAddress);
 ```
 
-**Usage through PrecompileLib:** The `PrecompileLib` exposes a [getTokenIndex](https://github.com/hyperliquid-dev/hyper-evm-lib/blob/b347756c392934712af9c27b92028a00b93cb68c/src/PrecompileLib.sol#L61-L66) function to read from the `TokenRegistry`, and can be used instead of directly interacting with the `TokenRegistry` contract. 
+**Usage through PrecompileLib:** 
+
+The `PrecompileLib` exposes a [getTokenIndex](https://github.com/hyperliquid-dev/hyper-evm-lib/blob/b347756c392934712af9c27b92028a00b93cb68c/src/PrecompileLib.sol#L61-L66) function to read from the `TokenRegistry`, and can be used instead of directly interacting with the `TokenRegistry` contract. 
 
 ```solidity
 uint64 tokenIdx = PrecompileLib.getTokenIndex(tokenAddress);
